@@ -79,6 +79,22 @@ main.wrap { padding-top: 24px; padding-bottom: 64px; }
 .answer h3 { margin: 0 0 6px; font-size: 15px; color: var(--c-key); }
 .answer p { margin: 0; }
 .reset { margin-top: 8px; }
+.wbar { margin-bottom: 16px; }
+.filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip.sm { min-height: 36px; padding: 0 14px; font-size: 14px; }
+.hide { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; }
+.hide input { width: 20px; height: 20px; accent-color: var(--c-key); }
+.wcount { margin: 8px 0 0; color: var(--c-text-sub); font-size: 14px; font-weight: 700; }
+.wgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.wcard { background: var(--c-bg); border: 1px solid var(--c-border); border-left: 6px solid var(--c-key); border-radius: 0 var(--r) var(--r) 0; padding: 14px 16px; }
+.wcard.known { border-left-color: var(--c-gold); background: #FFFBEF; }
+.wtop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.wr { font-size: 12px; font-weight: 700; color: var(--c-key); background: var(--c-key-bg); padding: 1px 8px; border-radius: 999px; }
+.kbtn { min-height: 32px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--c-border-field); background: var(--c-bg); color: var(--c-text); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.kbtn[aria-pressed="true"] { background: var(--c-gold); border-color: var(--c-gold); color: var(--c-gold-ink); }
+.wt { margin: 8px 0 4px; font-size: 17px; line-height: 1.5; }
+.wm { margin: 0; font-size: 15px; }
+.reveal { min-height: 40px; margin-top: 4px; }
 footer { color: var(--c-text-sub); font-size: 14px; padding: 24px 0 40px; border-top: 1px solid var(--c-border); }
 @media (max-width: 480px) { .hero h1 { font-size: 22px; } .btn { flex: 1 1 auto; } .part label { min-width: 100%; } }
 </style>
@@ -88,13 +104,14 @@ footer { color: var(--c-text-sub); font-size: 14px; padding: 24px 0 40px; border
 <section class="hero"><div class="wrap">
   <span class="badge">水1 ・ 中間テスト（第10回）対策</span>
   <h1>ファイナンス入門 中間テスト対策</h1>
-  <p>水1「ファイナンス入門」第1〜6回のレジュメから、穴埋め・記号・計算の問題をまとめました。</p>
+  <p>水1「ファイナンス入門」第1〜6回のレジュメから、穴埋め・記号・計算の問題と単語集をまとめました。</p>
 </div></section>
 <main class="wrap">
   <div class="tabs" role="group" aria-label="問題の種類">
     <button class="chip" data-t="fill" aria-pressed="true">穴埋め</button>
     <button class="chip" data-t="mc" aria-pressed="false">記号問題</button>
     <button class="chip" data-t="calc" aria-pressed="false">計算問題</button>
+    <button class="chip" data-t="words" aria-pressed="false">単語集</button>
   </div>
   <p class="lead" id="lead"></p>
   <div id="list"></div>
@@ -155,7 +172,8 @@ var CALC = [
 var LEAD = {
   fill: "空欄に言葉を入れて「答え合わせ」を押してください。言い方が違っても、主な別の言い方は正解にしています。",
   mc: "選択肢を押すと、すぐに正解と解説が出ます。",
-  calc: "数字だけを入れて「答え合わせ」を押してください（カンマや単位は不要。マイナスは − で）。"
+  calc: "数字だけを入れて「答え合わせ」を押してください（カンマや単位は不要。マイナスは − で）。",
+  words: "第2〜6回に出てきた覚えるべき言葉の一覧です。「意味をかくす」で暗記カードになります。覚えた言葉に印をつけると、「まだ覚えていない」だけを表示できます。"
 };
 
 var store = {
@@ -164,6 +182,7 @@ var store = {
 };
 var KEY = "finance-quiz-v1";
 var state = store.get(KEY, { fill: {}, mc: {}, calc: {} });
+state.words = state.words || {};
 var tab = "fill";
 
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
@@ -275,6 +294,141 @@ function renderCalc(list) {
   });
 }
 
+var WORDS = [
+  ["2", "会社四季報", "東洋経済新報社が年4回出す、上場企業すべての情報を1社ずつまとめた本。決算から約3か月後に発売され、3月決算の会社が多いので3集夏号が最も重要"],
+  ["2", "業績予想修正", "四季報の前号と今号で、営業利益の予想がどれだけ変わったかを5段階の矢印で示すもの"],
+  ["2", "強気度マーク", "四季報の予想と会社の予想の営業利益の乖離率を4段階で示すマーク。紙版にだけ載っている"],
+  ["2", "BS（貸借対照表）", "ある時点の財産の状態。資産（お金の使い道）＝ 負債 ＋ 純資産（お金の集め方）"],
+  ["2", "資本構成", "BSの右側の、負債と株主資本（純資産）の組み合わせ"],
+  ["2", "PL（損益計算書）", "1年間の儲けの流れ。売上高から費用を順に引いて5つの利益を出す"],
+  ["2", "売上総利益（粗利）", "売上高 − 売上原価。商品そのものの儲け"],
+  ["2", "営業利益", "売上総利益 − 販売費及び一般管理費。本業の儲け"],
+  ["2", "経常利益", "営業利益 ＋ 営業外収益 − 営業外費用。利息なども含めたふだんの儲け"],
+  ["2", "税引前当期純利益", "経常利益 ＋ 特別利益 − 特別損失。一時的な損益も含めた儲け"],
+  ["2", "当期純利益", "税引前当期純利益 − 法人税等。最終的に株主のものになる儲け"],
+  ["2", "自己資本比率", "自己資本 ÷ 総資産。返さなくてよいお金の割合で、高いほど安全"],
+  ["2", "流動比率", "流動資産 ÷ 流動負債。100%を下回ると短期の支払いに不安がある"],
+  ["2", "ROE（自己資本利益率）", "当期純利益 ÷ 自己資本。株主のお金でどれだけ稼いだか"],
+  ["2", "ROA（総資産利益率）", "利益 ÷ 総資産。会社の資産全体でどれだけ稼いだか"],
+  ["2", "EPS（1株当たり純利益）", "当期純利益 ÷ 発行済株式数"],
+  ["2", "BPS（1株当たり純資産）", "純資産 ÷ 発行済株式数"],
+  ["2", "PER（株価収益率）", "株価 ÷ EPS。高いほど利益に比べて株価が割高"],
+  ["2", "PBR（株価純資産倍率）", "株価 ÷ BPS。1倍を下回ると帳簿上の価値（解散価値）より安い"],
+  ["2", "時価総額", "株価 × 発行済株式数。市場がつけている会社全体の値段"],
+  ["2", "最低購入額", "株価 × 売買単位（2018年10月から100株に統一）"],
+  ["2", "フリーキャッシュフロー", "本業で稼いだ現金から投資に使った分を引いた、自由に使える現金。簡易的には営業CF ＋ 投資CF"],
+  ["2", "M&A", "企業の合併・買収。戦略 → 候補探し → NDA → 基本合意 → DD → 最終契約 → クロージング → PMI の順に進む"],
+  ["2", "NDA（秘密保持契約）", "M&Aの打診で関心がある相手と結び、詳しい情報を出すための契約"],
+  ["2", "基本合意（MOU・LOI）", "価格の目安、スケジュール、独占交渉権などを合意すること。法的拘束力は一部だけのことが多い"],
+  ["2", "デューデリジェンス（DD）", "買収前に買収先の財務・税務・法務・事業を詳しく調べ、隠れたリスクを洗い出すこと"],
+  ["2", "PMI", "買収後に経営・組織・システムを統合し、シナジーを出す作業"],
+  ["2", "のれん", "買収価格 − 買収先の時価純資産。ブランドやノウハウなどBSに載らない価値への支払い"],
+  ["2", "TOB（株式公開買付け）", "買付価格や期間を公表して、市場の外で株主から株を買い集める方法"],
+  ["2", "DCF法", "将来のキャッシュフローを割り引いた現在価値で企業価値を計算する方法"],
+  ["3", "銀行の3大業務", "預金（お金を預かる）、融資（貸し出す）、為替（振込や口座振替で送る・決済する）"],
+  ["3", "メインバンク", "企業がいちばん中心に取引している銀行。シェアは地方銀行40%、信用金庫24%、メガバンク19%、第二地銀9%"],
+  ["3", "預貸率", "貸出金 ÷ 預金。預かったお金のどれだけを貸出に回しているか（OKBは約78.8%）"],
+  ["3", "債務超過", "負債が資産を上回り、純資産がマイナスの状態。資産を全部売っても借金を返しきれない"],
+  ["3", "REVIC（地域経済活性化支援機構）", "地域の中小企業の再生を支援する国の機関。金融機関どうしやスポンサーとの調整、計画づくりを手伝う"],
+  ["3", "第二会社方式", "事業を新会社に移し、借金の残った旧会社を清算して返しきれない分を免除してもらう再生の方法"],
+  ["3", "事業譲渡", "事業（資産・契約・従業員など）を他の会社に売ること。吉田ハムで使われた"],
+  ["3", "吸収分割", "事業の権利義務を既存の別会社にまとめて引き継がせる会社分割。富田屋で使われた"],
+  ["3", "特別清算", "債務超過の株式会社をたたむための、裁判所の監督のもとでの清算手続き"],
+  ["3", "債権放棄", "金融機関が貸したお金の一部の返済を免除すること"],
+  ["3", "スポンサー", "再生する会社に資金や人材を出して支える会社（吉田ハムはJA全農ミートフーズ、富田屋はコノミヤ）"],
+  ["3", "EBITDA", "営業利益に減価償却費など現金の出ない費用を足したもの。現金ベースの本業の稼ぐ力"],
+  ["45", "部分準備銀行制度", "預金の一部しか手元に残さず、残りを貸し出す銀行の仕組み。預金の大半はすぐに払い戻せない"],
+  ["45", "銀行取付け", "預金者が一斉に預金を引き出そうとすること。銀行が払い戻せず、金融危機につながる"],
+  ["45", "プルーデンス政策", "金融システムを安定させるための規制（バーゼル合意）と監督（金融庁検査・日銀考査）"],
+  ["45", "貨幣の3つの役割", "交換手段・価値尺度・価値の貯蔵手段。極端なインフレでは価値の貯蔵手段の役割が失われる"],
+  ["45", "マネーストック", "世の中に出回っているお金の量。M1（現金通貨＋預金通貨）、M2・M3（さらに準通貨やCD）"],
+  ["45", "マネタリーベース", "日本銀行が供給するお金の量（現金と日銀当座預金）"],
+  ["45", "信用乗数", "1 ÷ 準備率。最初の預金が貸出の繰り返しで最大何倍の預金になるか"],
+  ["45", "キャッシュレス", "電子マネー（前払い）、デビットカード（同時払い）、クレジットカード（後払い・与信が必要）など。日本の比率は24.2%（2018年）"],
+  ["45", "暗号資産", "発行者や管理者がいない電子的な資産"],
+  ["45", "CBDC（中央銀行デジタル通貨）", "中央銀行が発行するデジタルのお金。日本では検討中"],
+  ["45", "実質利子率", "名目利子率 − 予想インフレ率（フィッシャー方程式）。お金の実際の価値がどれだけ増えるか"],
+  ["45", "銀行の実質金利", "（融資額×融資利率 − 預金額×預金利率）÷（融資額 − 預金額）。取引先の預金も合わせた銀行側の儲け"],
+  ["45", "利子率の決定要因", "安全性（リスク・プレミアム）、市場性・換金性（高いほど低金利）、資金額、期間（金利の期間構造）"],
+  ["45", "割引現在価値", "将来のお金を金利で割り引いた今の価値。C ÷ (1 ＋ r)^t"],
+  ["45", "金利と債券価格", "逆に動く。金利が上がると債券の価格は下がる（SVB破綻の例）"],
+  ["45", "コール市場", "金融機関どうしが短期の資金を貸し借りするインターバンク市場"],
+  ["45", "ケインズ効果", "金利が下がると企業の投資が活発になる効果"],
+  ["45", "資産効果", "株や債券の価格が上がると、投資や消費が増える効果"],
+  ["45", "政策効果の非対称性", "金融の引き締めはよく効くが、景気を刺激する効果は弱いこと"],
+  ["45", "インフレ・ターゲット", "物価上昇率の目標を示して金融政策を行うこと。日本は2013年に消費者物価2%を目標にした"],
+  ["45", "日本銀行の3つの機能", "発券銀行・銀行の銀行・政府の銀行"],
+  ["45", "新日銀法", "1997年に改正された日本銀行法。政策委員会（9名）が政策を決め、独立性と説明責任が定められた"],
+  ["45", "公定歩合操作", "日銀が銀行に貸すときの金利を動かす政策。1990年代に効果が薄れ、2001年に補完貸付制度（ロンバート型）になった"],
+  ["45", "預金準備率操作", "銀行が日銀に預ける準備の割合を変える政策。微調整ができず、今は使われていない"],
+  ["45", "公開市場操作", "日銀が国債などを売買する現代の主要な政策手段。買いオペ＝資金供給で金利低下、売りオペ＝資金吸収で金利上昇"],
+  ["45", "ゼロ金利政策", "1999年に始まった、短期金利をほぼ0%に誘導する政策"],
+  ["45", "量的緩和政策", "2001年に始まった、操作目標を金利から日銀当座預金残高に変えた政策"],
+  ["45", "量的・質的金融緩和", "2013年4月に始まった、国債やETF・REITを大量に買い入れる政策"],
+  ["45", "マイナス金利政策", "2016年1月に導入。日銀当座預金の一部（政策金利残高）に−0.1%の金利をつけた。当座預金は3層構造"],
+  ["45", "イールドカーブ・コントロール", "2016年10月に導入。短期金利と長期金利の両方を操作する政策"],
+  ["45", "金融システムの3つの機能", "金融仲介、リスク・シェアリング、決済。流動性（預金通貨）を供給できるのは銀行だけ"],
+  ["45", "不良債権", "返済が難しくなった貸出金。2001年には42兆円にのぼった"],
+  ["45", "メインバンク制度の変容", "大企業の銀行離れや株式持ち合いの崩壊で、メインバンクとの関係が弱まったこと"],
+  ["45", "リレーションシップ・バンキング", "地域密着型の金融。長期の関係で個別のニーズに柔軟に応え、経営相談や企業育成も行う"],
+  ["45", "トランザクション・バンキング", "取引ごとに財務データなどで判断する金融。審査は速いが対応は硬直的"],
+  ["45", "ホールドアップ問題", "1つの銀行に情報を握られた企業が、高い金利などの不利な条件をのまされること"],
+  ["45", "ソフトバジェット問題", "関係の深い企業に、返済が難しくても追い貸しを続けてしまうこと"],
+  ["45", "事業性評価", "担保や保証だけでなく、事業の内容や成長性を評価して融資すること"],
+  ["6", "公認会計士", "38,000人余。主な仕事は上場企業の会計監査（金商法監査）。ほかに会社法監査、学校法人監査など"],
+  ["6", "BIG4（4大監査法人）", "トーマツ（デロイト）、あずさ（KPMG）、新日本（EY）、PwC Japan（PwC）。監査収入の約8割を占める"],
+  ["6", "組織内会計士", "監査法人ではなく、一般企業や官公庁の中で働く公認会計士"],
+  ["6", "社外取締役・社外監査役", "会社の外部から経営を監督する役員。会計士の新しい活躍の場"],
+  ["6", "税理士", "82,000人余。企業や個人に代わって法人税・所得税・相続税などの税務申告を行う。資格取得者は試験免除（57.61%）が最も多い"],
+  ["6", "税務調査", "税務署が申告の内容を確かめる調査"],
+  ["6", "時間チャージ", "作業時間に応じて報酬を受け取る方法。AIで作業が速くなると報酬が減るため、付加価値で稼ぐ工夫が必要"],
+  ["6", "RPA", "定型的な事務作業をソフトウェアで自動化すること"]
+];
+
+var WORD_ROUNDS = [["all", "すべて"], ["2", "第2回"], ["3", "第3回"], ["45", "第4・5回"], ["6", "第6回"], ["todo", "まだ覚えていない"]];
+var wf = "all", hideMean = false;
+function wlabel(r) { return r === "45" ? "第4・5回" : "第" + r + "回"; }
+function renderWords(list) {
+  var bar = document.createElement("div");
+  bar.className = "wbar";
+  bar.innerHTML = '<div class="filter" role="group" aria-label="表示する回">' + WORD_ROUNDS.map(function (r) { return '<button class="chip sm" data-wf="' + r[0] + '" aria-pressed="' + (wf === r[0]) + '">' + r[1] + "</button>"; }).join("") + "</div>" +
+    '<label class="hide"><input type="checkbox" id="hideMean"' + (hideMean ? " checked" : "") + "> 意味をかくす（暗記カード）</label>" +
+    '<p class="wcount" id="wcount"></p>';
+  list.appendChild(bar);
+  var grid = document.createElement("div");
+  grid.className = "wgrid";
+  list.appendChild(grid);
+  var shown = 0;
+  WORDS.forEach(function (w, i) {
+    var known = !!state.words[i];
+    if (wf === "todo" && known) return;
+    if (wf !== "all" && wf !== "todo" && w[0] !== wf) return;
+    shown++;
+    var c = document.createElement("article");
+    c.className = "wcard" + (known ? " known" : "");
+    c.innerHTML = '<div class="wtop"><span class="wr">' + wlabel(w[0]) + '</span><button class="kbtn" aria-pressed="' + known + '">' + (known ? "覚えた ✓" : "覚えた？") + "</button></div>" +
+      '<h3 class="wt">' + esc(w[1]) + "</h3>" +
+      (hideMean ? '<button class="btn btn-secondary reveal">意味を見る</button><p class="wm" hidden>' : '<p class="wm">') + esc(w[2]) + "</p>";
+    grid.appendChild(c);
+    c.querySelector(".kbtn").addEventListener("click", function (e) {
+      if (state.words[i]) delete state.words[i]; else state.words[i] = true;
+      save();
+      var k = !!state.words[i];
+      c.classList.toggle("known", k);
+      e.currentTarget.setAttribute("aria-pressed", String(k));
+      e.currentTarget.textContent = k ? "覚えた ✓" : "覚えた？";
+      wcount();
+    });
+    var rv = c.querySelector(".reveal");
+    if (rv) rv.addEventListener("click", function () { c.querySelector(".wm").hidden = false; rv.remove(); });
+  });
+  if (!shown) grid.innerHTML = '<p class="card">この条件の言葉はありません。</p>';
+  bar.querySelectorAll("[data-wf]").forEach(function (b) { b.addEventListener("click", function () { wf = b.dataset.wf; render(); }); });
+  bar.querySelector("#hideMean").addEventListener("change", function (e) { hideMean = e.target.checked; render(); });
+  function wcount() { document.getElementById("wcount").textContent = "覚えた " + Object.keys(state.words).length + " / " + WORDS.length + " 語"; }
+  wcount();
+}
+
 function toggle(card, btn, a, b) {
   var box = card.querySelector(".answer");
   box.hidden = !box.hidden;
@@ -286,7 +440,8 @@ function render() {
   var list = document.getElementById("list");
   list.innerHTML = "";
   document.getElementById("lead").textContent = LEAD[tab];
-  if (tab === "fill") renderFill(list); else if (tab === "mc") renderMC(list); else renderCalc(list);
+  if (tab === "fill") renderFill(list); else if (tab === "mc") renderMC(list); else if (tab === "calc") renderCalc(list); else renderWords(list);
+  document.getElementById("reset").textContent = tab === "words" ? "「覚えた」の印をすべて外す" : "この種類の記録をリセット";
   updProgress();
 }
 
