@@ -9,12 +9,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
 <style>
-/* デジタル庁デザインシステム（DADS）を土台にしたスタイル。marketing-quiz・keieisha-quiz とそろえています。 */
+/* デジタル庁デザインシステム（DADS）を土台に、紫と金の配色にしたスタイル。 */
 :root {
-  --c-key: #0017C1; --c-key-hover: #00118F; --c-key-bg: #E8F1FE;
+  --c-key: #4B2E83; --c-key-hover: #3A2266; --c-key-bg: #F1ECFA; --c-gold: #E0B43C; --c-gold-ink: #3D2A00;
   --c-text: #1A1A1A; --c-text-sub: #4D4D4D;
-  --c-bg: #FFFFFF; --c-bg-page: #F4F6FA; --c-bg-sub: #F2F2F2;
-  --c-border: #D8DCE3; --c-border-field: #666666;
+  --c-bg: #FFFFFF; --c-bg-page: #F7F5FB; --c-bg-sub: #F2F2F2;
+  --c-border: #DDD6EA; --c-border-field: #666666;
   --c-success: #197A4B; --c-success-bg: #E6F5EC; --c-error: #CE0000; --c-error-bg: #FDEEEE;
   --c-focus: #FFD43D;
   --font: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
@@ -27,22 +27,24 @@ html, body { margin: 0; }
 body { background: var(--c-bg-page); color: var(--c-text); font-family: var(--font); font-size: 16px; line-height: 1.7; letter-spacing: .02em; }
 :focus-visible { outline: 4px solid var(--c-focus); outline-offset: 2px; box-shadow: 0 0 0 2px var(--c-text); border-radius: 4px; }
 .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
-.appbar { position: sticky; top: 0; z-index: 10; background: var(--c-key); color: #FFF; }
+.appbar { position: sticky; top: 0; z-index: 10; background: var(--c-key); color: #FFF; border-bottom: 4px solid var(--c-gold); }
 .appbar .wrap { height: 60px; display: flex; align-items: center; gap: 12px; }
 .brand { font-weight: 900; font-size: 17px; }
-.progress { margin-left: auto; font-size: 14px; font-weight: 700; white-space: nowrap; }
-.hero { background: var(--c-key); color: #FFF; padding: 28px 0 32px; }
+.progress { margin-left: auto; font-size: 14px; font-weight: 700; white-space: nowrap; background: var(--c-gold); color: var(--c-gold-ink); padding: 2px 12px; border-radius: 999px; }
+.hero { background: var(--c-key) radial-gradient(rgba(255,255,255,.10) 1px, transparent 1px) 0 0/18px 18px; color: #FFF; padding: 24px 0 32px; }
+.hero .badge { display: inline-block; background: var(--c-gold); color: var(--c-gold-ink); font-size: 13px; font-weight: 700; padding: 2px 12px; border-radius: 999px; margin-bottom: 10px; }
 .hero h1 { margin: 0 0 8px; font-size: 26px; line-height: 1.4; }
 .hero p { margin: 0; opacity: .92; }
-main { padding: 24px 0 64px; }
+main.wrap { padding-top: 24px; padding-bottom: 64px; }
 .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
 .chip { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--c-key); background: var(--c-bg); color: var(--c-key); font: inherit; font-weight: 700; cursor: pointer; }
-.chip[aria-pressed="true"] { background: var(--c-key); color: #FFF; }
+.chip[aria-pressed="true"] { background: var(--c-gold); border-color: var(--c-gold); color: var(--c-gold-ink); }
 .lead { background: var(--c-bg); border: 1px solid var(--c-border); border-radius: var(--r); padding: 14px 18px; margin-bottom: 20px; font-size: 15px; color: var(--c-text-sub); }
 .card { background: var(--c-bg); border: 1px solid var(--c-border); border-radius: var(--r); padding: 20px; margin-bottom: 16px; }
+.card { border-top: 4px solid var(--c-key); }
 .card.ok { border-color: var(--c-success); }
 .card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-.qno { font-weight: 900; color: var(--c-key); font-size: 18px; }
+.qno { font-weight: 900; background: var(--c-key); color: #FFF; font-size: 15px; padding: 2px 12px; border-radius: 999px; }
 .tag { font-size: 13px; font-weight: 700; color: var(--c-text-sub); background: var(--c-bg-sub); border-radius: 4px; padding: 2px 8px; }
 .tag.done { color: var(--c-success); background: var(--c-success-bg); }
 .sent { margin: 0 0 12px; line-height: 2.4; }
@@ -57,7 +59,7 @@ main { padding: 24px 0 64px; }
 .opt .k { font-weight: 900; color: var(--c-key); min-width: 1.4em; }
 .opt.right { border: 2px solid var(--c-success); background: var(--c-success-bg); }
 .opt.wrong { border: 2px solid var(--c-error); background: var(--c-error-bg); }
-.opt:disabled { cursor: default; }
+.opt:disabled { cursor: default; color: var(--c-text); }
 .parts { display: grid; gap: 10px; margin: 0 0 12px; }
 .part { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .part label { min-width: 9em; font-weight: 700; font-size: 15px; }
@@ -84,6 +86,7 @@ footer { color: var(--c-text-sub); font-size: 14px; padding: 24px 0 40px; border
 <body>
 <header class="appbar"><div class="wrap"><span class="brand">ファイナンス入門 演習</span><span class="progress" id="progress"></span></div></header>
 <section class="hero"><div class="wrap">
+  <span class="badge">水1 ・ 中間テスト（第10回）対策</span>
   <h1>ファイナンス入門 中間テスト対策</h1>
   <p>水1「ファイナンス入門」第1〜6回のレジュメから、穴埋め・記号・計算の問題をまとめました。</p>
 </div></section>
