@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ファイナンス入門 演習</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap">
+<style>
+/* デジタル庁デザインシステム（DADS）を土台にしたスタイル。marketing-quiz・keieisha-quiz とそろえています。 */
+:root {
+  --c-key: #0017C1; --c-key-hover: #00118F; --c-key-bg: #E8F1FE;
+  --c-text: #1A1A1A; --c-text-sub: #4D4D4D;
+  --c-bg: #FFFFFF; --c-bg-page: #F4F6FA; --c-bg-sub: #F2F2F2;
+  --c-border: #D8DCE3; --c-border-field: #666666;
+  --c-success: #197A4B; --c-success-bg: #E6F5EC; --c-error: #CE0000; --c-error-bg: #FDEEEE;
+  --c-focus: #FFD43D;
+  --font: "Noto Sans JP", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  --r: 8px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+[hidden] { display: none !important; }
+body { background: var(--c-bg-page); color: var(--c-text); font-family: var(--font); font-size: 16px; line-height: 1.7; letter-spacing: .02em; }
+:focus-visible { outline: 4px solid var(--c-focus); outline-offset: 2px; box-shadow: 0 0 0 2px var(--c-text); border-radius: 4px; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+.appbar { position: sticky; top: 0; z-index: 10; background: var(--c-key); color: #FFF; }
+.appbar .wrap { height: 60px; display: flex; align-items: center; gap: 12px; }
+.brand { font-weight: 900; font-size: 17px; }
+.progress { margin-left: auto; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.hero { background: var(--c-key); color: #FFF; padding: 28px 0 32px; }
+.hero h1 { margin: 0 0 8px; font-size: 26px; line-height: 1.4; }
+.hero p { margin: 0; opacity: .92; }
+main { padding: 24px 0 64px; }
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.chip { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--c-key); background: var(--c-bg); color: var(--c-key); font: inherit; font-weight: 700; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--c-key); color: #FFF; }
+.lead { background: var(--c-bg); border: 1px solid var(--c-border); border-radius: var(--r); padding: 14px 18px; margin-bottom: 20px; font-size: 15px; color: var(--c-text-sub); }
+.card { background: var(--c-bg); border: 1px solid var(--c-border); border-radius: var(--r); padding: 20px; margin-bottom: 16px; }
+.card.ok { border-color: var(--c-success); }
+.card-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.qno { font-weight: 900; color: var(--c-key); font-size: 18px; }
+.tag { font-size: 13px; font-weight: 700; color: var(--c-text-sub); background: var(--c-bg-sub); border-radius: 4px; padding: 2px 8px; }
+.tag.done { color: var(--c-success); background: var(--c-success-bg); }
+.sent { margin: 0 0 12px; line-height: 2.4; }
+.blank { display: inline-block; width: 9em; max-width: 100%; min-height: 40px; padding: 4px 8px; margin: 0 2px; font: inherit; border: 1px solid var(--c-border-field); border-radius: 6px; vertical-align: middle; }
+.blank.s { width: 4.5em; }
+.blank.hit { border: 2px solid var(--c-success); background: var(--c-success-bg); }
+.blank.miss { border: 2px solid var(--c-error); background: var(--c-error-bg); }
+.prompt { margin: 0 0 12px; }
+.opts { display: grid; gap: 8px; margin: 0 0 12px; }
+.opt { display: flex; gap: 10px; align-items: center; min-height: 48px; padding: 8px 14px; border: 1px solid var(--c-border-field); border-radius: var(--r); background: var(--c-bg); font: inherit; text-align: left; cursor: pointer; }
+.opt:hover { background: var(--c-key-bg); }
+.opt .k { font-weight: 900; color: var(--c-key); min-width: 1.4em; }
+.opt.right { border: 2px solid var(--c-success); background: var(--c-success-bg); }
+.opt.wrong { border: 2px solid var(--c-error); background: var(--c-error-bg); }
+.opt:disabled { cursor: default; }
+.parts { display: grid; gap: 10px; margin: 0 0 12px; }
+.part { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.part label { min-width: 9em; font-weight: 700; font-size: 15px; }
+.part input { width: 9em; min-height: 44px; padding: 6px 10px; font: inherit; border: 1px solid var(--c-border-field); border-radius: 6px; text-align: right; }
+.part input.hit { border: 2px solid var(--c-success); background: var(--c-success-bg); }
+.part input.miss { border: 2px solid var(--c-error); background: var(--c-error-bg); }
+.unit { color: var(--c-text-sub); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { min-height: 48px; padding: 0 20px; border-radius: var(--r); font: inherit; font-weight: 700; cursor: pointer; border: 1px solid var(--c-key); }
+.btn-primary { background: var(--c-key); color: #FFF; }
+.btn-primary:hover { background: var(--c-key-hover); }
+.btn-secondary { background: var(--c-bg); color: var(--c-key); }
+.result { margin-top: 14px; padding: 12px 16px; border-radius: var(--r); }
+.result.ok { background: var(--c-success-bg); border-left: 6px solid var(--c-success); border-radius: 0; }
+.result.ng { background: var(--c-error-bg); border-left: 6px solid var(--c-error); border-radius: 0; }
+.answer { margin-top: 14px; padding: 14px 16px; background: var(--c-key-bg); border-radius: var(--r); }
+.answer h3 { margin: 0 0 6px; font-size: 15px; color: var(--c-key); }
+.answer p { margin: 0; }
+.reset { margin-top: 8px; }
+footer { color: var(--c-text-sub); font-size: 14px; padding: 24px 0 40px; border-top: 1px solid var(--c-border); }
+@media (max-width: 480px) { .hero h1 { font-size: 22px; } .btn { flex: 1 1 auto; } .part label { min-width: 100%; } }
+</style>
+</head>
+<body>
+<header class="appbar"><div class="wrap"><span class="brand">ファイナンス入門 演習</span><span class="progress" id="progress"></span></div></header>
+<section class="hero"><div class="wrap">
+  <h1>ファイナンス入門 中間テスト対策</h1>
+  <p>水1「ファイナンス入門」第1〜6回のレジュメから、穴埋め・記号・計算の問題をまとめました。</p>
+</div></section>
+<main class="wrap">
+  <div class="tabs" role="group" aria-label="問題の種類">
+    <button class="chip" data-t="fill" aria-pressed="true">穴埋め</button>
+    <button class="chip" data-t="mc" aria-pressed="false">記号問題</button>
+    <button class="chip" data-t="calc" aria-pressed="false">計算問題</button>
+  </div>
+  <p class="lead" id="lead"></p>
+  <div id="list"></div>
+  <button class="btn btn-secondary reset" id="reset">この種類の記録をリセット</button>
+</main>
+<footer><div class="wrap">問題は個人の復習用に作ったもので、授業の公式な資料ではありません。正解した記録はこのブラウザにだけ保存されます。</div></footer>
+
+<script>
+var FILL = [
+  { t: "銀行の3大業務は、預金業務・{0}業務・{1}業務である。", a: [["融資", "貸出"], ["為替"]], ex: "預金で集めたお金を融資に回し、為替で送金・決済を担う。" },
+  { t: "会社四季報は年{0}回、決算から約{1}か月後に発売され、3月決算の会社が多いため{2}号が最も重要である。", a: [["4", "四"], ["3", "三"], ["3集夏", "夏", "3集", "夏号"]], s: [1, 1, 0], ex: "3月の本決算が6月の夏号に載るので、1年の結果と今期予想がそろう。" },
+  { t: "強気度マークは、四季報の予想と会社の予想の{0}の乖離率を{1}段階で示し、{2}版にだけ載っている。", a: [["営業利益"], ["4", "四"], ["紙"]], s: [0, 1, 1], ex: "前号からの業績予想修正（5段階の矢印）と混同しないこと。" },
+  { t: "BSでは、資産 ＝ {0} ＋ {1} が必ず成り立つ。", a: [["負債"], ["純資産", "自己資本"]], ex: "左側はお金の使い道、右側はお金の集め方。" },
+  { t: "M&Aでは、買収前に買収先を詳しく調べる{0}を行い、買収後には組織やシステムを統合する{1}を行う。", a: [["デューデリジェンス", "DD"], ["PMI"]], ex: "流れは NDA → 基本合意 → DD → 最終契約 → クロージング → PMI。" },
+  { t: "企業のメインバンクとして最もシェアが大きいのは地方銀行で、その割合は{0}%である。", a: [["40", "四十"]], s: [1], ex: "信用金庫24%、メガバンク19%、第二地銀9%と続く。" },
+  { t: "第二会社方式では、事業を{0}に移し、旧会社に残った返しきれない借金は{1}してもらう。", a: [["新会社", "承継会社", "新しい会社"], ["免除", "債権放棄", "放棄"]], ex: "事業と雇用を守りながら、過去の借金だけを切り離せる。" },
+  { t: "貨幣の役割は、{0}、価値尺度、{1}の3つである。", a: [["交換手段", "交換"], ["価値の貯蔵手段", "価値貯蔵手段", "貯蔵手段", "価値の保蔵手段", "価値保蔵手段"]], ex: "極端なインフレでは価値の貯蔵手段の役割が失われる。" },
+  { t: "実質利子率 ＝ 名目利子率 − {0}", a: [["予想インフレ率", "期待インフレ率", "インフレ率", "予想物価上昇率", "物価上昇率"]], ex: "フィッシャー方程式。銀行実務の「実質金利」とは別の意味。" },
+  { t: "銀行は預かった預金の大半をすぐ払い戻せない{0}制度のため、{1}のリスクがある。これを防ぐ規制・監督を{2}政策という。", a: [["部分準備銀行", "部分準備"], ["銀行取付け", "取付け", "取り付け", "取付", "銀行取り付け", "取付騒ぎ"], ["プルーデンス"]], ex: "規制はバーゼル合意、監督は金融庁検査と日銀考査。" },
+  { t: "日本銀行は、{0}銀行、銀行の銀行、{1}の銀行の3つの機能を持ち、1997年の{2}で独立性が高められた。", a: [["発券"], ["政府"], ["新日銀法", "新日本銀行法", "日銀法", "日本銀行法"]], ex: "政策委員会（9名）が金融政策を決め、説明責任を負う。" },
+  { t: "金利が上がると、債券の価格は{0}する。", a: [["下落", "低下", "下が", "下降"]], s: [1], ex: "金利と債券価格は逆に動く（SVB破綻の例）。" },
+  { t: "2013年4月に始まった{0}では、消費者物価の上昇率{1}%を目標とした。", a: [["量的・質的金融緩和", "量的質的金融緩和", "量的・質的緩和", "量的質的緩和", "異次元緩和", "QQE"], ["2", "二"]], s: [0, 1], ex: "その後、マイナス金利（2016年1月）、イールドカーブ・コントロール（2016年10月）へ。" },
+  { t: "公認会計士の主な仕事は、上場企業の{0}である。一方、税理士は企業や個人に代わって{1}を行う。", a: [["会計監査", "監査", "金商法監査"], ["税務申告", "申告", "税務申告の代理"]], ex: "公認会計士は第三者として、税理士は会社や個人の側に立つ。" }
+];
+
+var MC = [
+  { q: "企業のメインバンクのシェアが最も大きいのはどれか。", o: ["メガバンク", "地方銀行", "第二地銀", "信用金庫"], a: 1, ex: "地方銀行40%、信用金庫24%、メガバンク19%、第二地銀9%。" },
+  { q: "PLで「本業の儲け」を表す利益はどれか。", o: ["売上総利益", "営業利益", "経常利益", "当期純利益"], a: 1, ex: "営業利益 ＝ 売上総利益 − 販管費。" },
+  { q: "日銀の買いオペの効果として正しいものはどれか。", o: ["資金を吸収し、金利が上がる", "資金を供給し、金利が下がる", "資金を吸収し、金利が下がる", "資金を供給し、金利が上がる"], a: 1, ex: "日銀が国債を買ってお金を渡すので市場の資金が増え、金利が下がる。" },
+  { q: "現代の金融政策の主要な手段はどれか。", o: ["公定歩合操作", "預金準備率操作", "公開市場操作", "為替介入"], a: 2, ex: "公定歩合は1990年代に効果が薄れ、準備率操作は今は使われない。" },
+  { q: "2016年1月に導入された政策はどれか。", o: ["ゼロ金利政策", "量的緩和政策", "マイナス金利政策", "イールドカーブ・コントロール"], a: 2, ex: "ゼロ金利1999年、量的緩和2001年、YCCは2016年10月。" },
+  { q: "後払いで、利用に「与信」が必要な支払い方法はどれか。", o: ["電子マネー", "デビットカード", "クレジットカード", "現金"], a: 2, ex: "電子マネーは前払い、デビットカードは同時払い。" },
+  { q: "金融システムの3つの機能に含まれないものはどれか。", o: ["金融仲介機能", "リスク・シェアリング", "決済機能", "発券機能"], a: 3, ex: "発券は日本銀行の機能。" },
+  { q: "リレーションシップ・バンキングのデメリットではないものはどれか。", o: ["ホールドアップ問題", "ソフトバジェット問題（追い貸し）", "審査スピードが速い", "関係づくりに時間とコストがかかる"], a: 2, ex: "審査が速いのはトランザクション・バンキングのメリット。" },
+  { q: "4大監査法人と提携先の組み合わせで誤っているものはどれか。", o: ["トーマツ－デロイト", "あずさ－EY", "新日本－EY", "PwC Japan－PwC"], a: 1, ex: "あずさはKPMGと提携している。" },
+  { q: "一般に高い金利がつきやすいものはどれか。", o: ["国債", "大手企業の社債", "無名の会社の社債", "換金性の高い商品"], a: 2, ex: "安全性・市場性・換金性が低いほど金利は高くなる。" },
+  { q: "会社四季報で業界内の順位やライバル企業が分かる欄はどれか。", o: ["業種・比較会社", "資本移動", "株主構成", "配当"], a: 0, ex: "就活の企業研究にも使える欄。" },
+  { q: "令和7年度の税理士資格取得者で最も多いルートはどれか。", o: ["税理士試験の合格", "試験の免除（国税職員など）", "公認会計士", "弁護士"], a: 1, ex: "試験免除57.61%、試験合格20.71%、公認会計士19.12%、弁護士2.53%。" },
+  { q: "吉田ハムと富田屋の再生前のBSに共通する状態はどれか。", o: ["自己資本比率が50%を超えている", "債務超過", "無借金経営", "流動比率が200%を超えている"], a: 1, ex: "どちらも純資産がマイナスで、資産を全部売っても負債を返しきれない。" }
+];
+
+var CALC = [
+  { q: "銀行の実質金利 ＝（融資額×融資利率 − 預金額×預金利率）÷（融資額 − 預金額）。取引先の預金は定期預金40,000千円（0.50%）と普通預金60,000千円（0%）、融資は200,000千円（1.50%）。実質金利を求めよ。", p: [["実質金利", 2.8, "%"]], ex: "預金の利息 40,000 × 0.5% ＝ 200千円。融資の利息 200,000 × 1.5% ＝ 3,000千円。（3,000 − 200）÷（200,000 − 100,000）＝ 2,800 ÷ 100,000 ＝ 2.8%。" },
+  { q: "レジュメの例題：滝商店の預金は計100,000千円（支払利息370千円）、融資は計250,000千円（受取利息3,600千円）。山の畑銀行から見た実質金利を求めよ（小数第2位まで）。", p: [["実質金利", 2.15, "%", 0.01]], ex: "（3,600 − 370）÷（250,000 − 100,000）＝ 3,230 ÷ 150,000 ≒ 2.15%。融資だけの平均1.44%より高くなる。" },
+  { q: "準備率20%のとき、100万円の預金から生まれる預金の合計（最大）と、新しく生まれた預金を求めよ。", p: [["預金の合計", 500, "万円"], ["新しく生まれた預金", 400, "万円"]], ex: "信用乗数 ＝ 1 ÷ 0.2 ＝ 5。合計 100 × 5 ＝ 500万円。新しく生まれた預金 500 − 100 ＝ 400万円。" },
+  { q: "次の2つの場合の実質利子率を求めよ。(a) 名目金利3%・予想インフレ率1%、(b) 名目金利0.3%・予想インフレ率2.5%", p: [["(a)", 2, "%"], ["(b)", -2.2, "%"]], ex: "(a) 3 − 1 ＝ 2%。(b) 0.3 − 2.5 ＝ −2.2%（預金の価値が実質的に目減りする）。" },
+  { q: "売上高800、売上原価500、販管費180、営業外収益10、営業外費用30、特別損失20、法人税等は税引前当期純利益の30%。5つの利益を求めよ。", p: [["売上総利益", 300, ""], ["営業利益", 120, ""], ["経常利益", 100, ""], ["税引前当期純利益", 80, ""], ["当期純利益", 56, ""]], ex: "800 − 500 ＝ 300 → 300 − 180 ＝ 120 → 120 ＋ 10 − 30 ＝ 100 → 100 − 20 ＝ 80 → 80 − 80 × 0.3 ＝ 56。" },
+  { q: "総資産5,000、自己資本2,000、当期純利益300の会社の自己資本比率・ROE・ROAを求めよ。", p: [["自己資本比率", 40, "%"], ["ROE", 15, "%"], ["ROA", 6, "%"]], ex: "2,000 ÷ 5,000 ＝ 40%。ROE 300 ÷ 2,000 ＝ 15%。ROA 300 ÷ 5,000 ＝ 6%。" },
+  { q: "株価3,000円、EPS150円、BPS2,000円のときのPER・PBRと、最低購入額（売買単位100株）を求めよ。", p: [["PER", 20, "倍"], ["PBR", 1.5, "倍"], ["最低購入額", 300000, "円"]], ex: "PER 3,000 ÷ 150 ＝ 20倍。PBR 3,000 ÷ 2,000 ＝ 1.5倍。最低購入額 3,000 × 100 ＝ 300,000円。" },
+  { q: "買収価格900、買収先の時価の資産1,500・負債800のとき、のれんを求めよ。", p: [["のれん", 200, ""]], ex: "時価純資産 1,500 − 800 ＝ 700。のれん 900 − 700 ＝ 200。" },
+  { q: "大垣共立銀行の預金は5兆8,625億円、貸出金は4兆6,222億円。預貸率を求めよ（小数第1位まで）。", p: [["預貸率", 78.8, "%", 0.1]], ex: "46,222 ÷ 58,625 ≒ 78.8%。" },
+  { q: "吉田ハムの総資産は5,812、純資産は△1,480（百万円）。自己資本比率を求めよ（小数第1位まで）。", p: [["自己資本比率", -25.5, "%", 0.1]], ex: "−1,480 ÷ 5,812 ≒ −25.5%。純資産がマイナスなので債務超過。" },
+  { q: "任天堂（20.3期）の総資産は1,934,087百万円、自己資本は1,540,687百万円、株価は45,240円、1株益は2,171円。自己資本比率と実績PERを求めよ（小数第1位まで）。", p: [["自己資本比率", 79.7, "%", 0.1], ["実績PER", 20.8, "倍", 0.1]], ex: "1,540,687 ÷ 1,934,087 ≒ 79.7%。45,240 ÷ 2,171 ≒ 20.8倍。" },
+  { q: "金利10%のとき、1年後の110万円と2年後の121万円の割引現在価値を求めよ。", p: [["1年後の110万円", 100, "万円"], ["2年後の121万円", 100, "万円"]], ex: "110 ÷ 1.1 ＝ 100万円。121 ÷ 1.1² ＝ 121 ÷ 1.21 ＝ 100万円。" },
+  { q: "地域金融機関の数は、1996年3月の914から2024年9月には496になった。減少率を求めよ（小数第1位まで）。", p: [["減少率", 45.7, "%", 0.1]], ex: "（914 − 496）÷ 914 ＝ 418 ÷ 914 ≒ 45.7%。" }
+];
+
+var LEAD = {
+  fill: "空欄に言葉を入れて「答え合わせ」を押してください。言い方が違っても、主な別の言い方は正解にしています。",
+  mc: "選択肢を押すと、すぐに正解と解説が出ます。",
+  calc: "数字だけを入れて「答え合わせ」を押してください（カンマや単位は不要。マイナスは − で）。"
+};
+
+var store = {
+  get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+var KEY = "finance-quiz-v1";
+var state = store.get(KEY, { fill: {}, mc: {}, calc: {} });
+var tab = "fill";
+
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function z2h(s) { return String(s).replace(/[０-９Ａ-Ｚａ-ｚ．，]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); }); }
+function normW(s) { return z2h(s).replace(/[\s・･「」『』]/g, "").toLowerCase(); }
+function toNum(s) {
+  var t = z2h(s).replace(/[\s,円%％倍万]/g, "").replace(/[−ー―‐－▲△]/g, "-");
+  if (t === "" || isNaN(Number(t))) return null;
+  return Number(t);
+}
+function total() { return FILL.length + MC.length + CALC.length; }
+function done() {
+  var n = 0; ["fill", "mc", "calc"].forEach(function (k) { n += Object.keys(state[k]).filter(function (x) { return state[k][x]; }).length; }); return n;
+}
+function updProgress() { document.getElementById("progress").textContent = "正解 " + done() + " / " + total(); }
+function save() { store.set(KEY, state); updProgress(); }
+function head(i, ok) { return '<div class="card-head"><span class="qno">問' + (i + 1) + '</span>' + (ok ? '<span class="tag done">正解済み</span>' : "") + "</div>"; }
+
+function renderFill(list) {
+  FILL.forEach(function (q, i) {
+    var card = document.createElement("article");
+    card.className = "card" + (state.fill[i] ? " ok" : "");
+    var html = esc(q.t).replace(/\{(\d+)\}/g, function (_, n) {
+      var sm = q.s && q.s[n] ? " s" : "";
+      return '<input class="blank' + sm + '" data-n="' + n + '" aria-label="空欄' + (Number(n) + 1) + '" autocomplete="off">';
+    });
+    card.innerHTML = head(i, state.fill[i]) + '<p class="sent">' + html + "</p>" +
+      '<div class="btns"><button class="btn btn-primary" data-act="check">答え合わせ</button><button class="btn btn-secondary" data-act="show" aria-expanded="false">答えを見る</button></div>' +
+      '<div class="result" hidden aria-live="polite"></div>' +
+      '<div class="answer" hidden><h3>答え</h3><p>' + q.a.map(function (g, n) { return "（" + (n + 1) + "）" + esc(g[0]); }).join("　") + "<br>" + esc(q.ex) + "</p></div>";
+    list.appendChild(card);
+    var inputs = card.querySelectorAll(".blank");
+    card.querySelector('[data-act="check"]').addEventListener("click", function () {
+      var hits = 0;
+      inputs.forEach(function (inp) {
+        var g = q.a[Number(inp.dataset.n)], v = normW(inp.value);
+        var ok = v !== "" && g.some(function (w) { return v === normW(w); });
+        inp.classList.toggle("hit", ok); inp.classList.toggle("miss", !ok);
+        if (ok) hits++;
+      });
+      var all = hits === inputs.length, box = card.querySelector(".result");
+      box.hidden = false; box.className = "result " + (all ? "ok" : "ng");
+      box.innerHTML = "<strong>" + (all ? "正解！" : hits + " / " + inputs.length + " 個正解。赤い空欄を見直してみよう。") + "</strong>" + (all ? "<br>" + esc(q.ex) : "");
+      if (all) { state.fill[i] = true; card.classList.add("ok"); save(); }
+    });
+    card.querySelector('[data-act="show"]').addEventListener("click", function (e) { toggle(card, e.currentTarget, "答えを見る", "答えを隠す"); });
+    inputs.forEach(function (inp) { inp.addEventListener("keydown", function (e) { if (e.key === "Enter") card.querySelector('[data-act="check"]').click(); }); });
+  });
+}
+
+function renderMC(list) {
+  var keys = ["ア", "イ", "ウ", "エ"];
+  MC.forEach(function (q, i) {
+    var card = document.createElement("article");
+    card.className = "card" + (state.mc[i] ? " ok" : "");
+    card.innerHTML = head(i, state.mc[i]) + '<p class="prompt">' + esc(q.q) + "</p>" +
+      '<div class="opts">' + q.o.map(function (o, n) { return '<button class="opt" data-n="' + n + '"><span class="k">' + keys[n] + "</span>" + esc(o) + "</button>"; }).join("") + "</div>" +
+      '<div class="result" hidden aria-live="polite"></div>' +
+      '<div class="btns"><button class="btn btn-secondary" data-act="retry" hidden>もう一度解く</button></div>';
+    list.appendChild(card);
+    var btns = card.querySelectorAll(".opt"), box = card.querySelector(".result"), retry = card.querySelector('[data-act="retry"]');
+    btns.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var n = Number(b.dataset.n), ok = n === q.a;
+        btns.forEach(function (x) { x.disabled = true; if (Number(x.dataset.n) === q.a) x.classList.add("right"); });
+        if (!ok) b.classList.add("wrong");
+        box.hidden = false; box.className = "result " + (ok ? "ok" : "ng");
+        box.innerHTML = "<strong>" + (ok ? "正解！" : "不正解。正解は " + keys[q.a] + "。") + "</strong><br>" + esc(q.ex);
+        retry.hidden = false;
+        if (ok) { state.mc[i] = true; card.classList.add("ok"); save(); }
+      });
+    });
+    retry.addEventListener("click", function () {
+      btns.forEach(function (x) { x.disabled = false; x.classList.remove("right", "wrong"); });
+      box.hidden = true; retry.hidden = true;
+    });
+  });
+}
+
+function renderCalc(list) {
+  CALC.forEach(function (q, i) {
+    var card = document.createElement("article");
+    card.className = "card" + (state.calc[i] ? " ok" : "");
+    card.innerHTML = head(i, state.calc[i]) + '<p class="prompt">' + esc(q.q) + "</p>" +
+      '<div class="parts">' + q.p.map(function (p, n) {
+        var id = "c" + i + "_" + n;
+        return '<div class="part"><label for="' + id + '">' + esc(p[0]) + '</label><input id="' + id + '" inputmode="decimal" autocomplete="off" data-n="' + n + '"><span class="unit">' + esc(p[2]) + "</span></div>";
+      }).join("") + "</div>" +
+      '<div class="btns"><button class="btn btn-primary" data-act="check">答え合わせ</button><button class="btn btn-secondary" data-act="show" aria-expanded="false">解き方を見る</button></div>' +
+      '<div class="result" hidden aria-live="polite"></div>' +
+      '<div class="answer" hidden><h3>解き方</h3><p>' + esc(q.ex) + "</p></div>";
+    list.appendChild(card);
+    var inputs = card.querySelectorAll(".part input");
+    card.querySelector('[data-act="check"]').addEventListener("click", function () {
+      var hits = 0;
+      inputs.forEach(function (inp) {
+        var p = q.p[Number(inp.dataset.n)], v = toNum(inp.value), tol = p[3] != null ? p[3] : Math.max(0.05, Math.abs(p[1]) * 0.001);
+        var ok = v !== null && Math.abs(v - p[1]) <= tol + 1e-9;
+        inp.classList.toggle("hit", ok); inp.classList.toggle("miss", !ok);
+        if (ok) hits++;
+      });
+      var all = hits === inputs.length, box = card.querySelector(".result");
+      box.hidden = false; box.className = "result " + (all ? "ok" : "ng");
+      box.innerHTML = "<strong>" + (all ? "正解！" : hits + " / " + inputs.length + " 個正解。") + "</strong>" + (all ? "<br>" + esc(q.ex) : "");
+      if (all) { state.calc[i] = true; card.classList.add("ok"); save(); }
+    });
+    card.querySelector('[data-act="show"]').addEventListener("click", function (e) { toggle(card, e.currentTarget, "解き方を見る", "解き方を隠す"); });
+    inputs.forEach(function (inp) { inp.addEventListener("keydown", function (e) { if (e.key === "Enter") card.querySelector('[data-act="check"]').click(); }); });
+  });
+}
+
+function toggle(card, btn, a, b) {
+  var box = card.querySelector(".answer");
+  box.hidden = !box.hidden;
+  btn.setAttribute("aria-expanded", String(!box.hidden));
+  btn.textContent = box.hidden ? a : b;
+}
+
+function render() {
+  var list = document.getElementById("list");
+  list.innerHTML = "";
+  document.getElementById("lead").textContent = LEAD[tab];
+  if (tab === "fill") renderFill(list); else if (tab === "mc") renderMC(list); else renderCalc(list);
+  updProgress();
+}
+
+document.querySelectorAll(".chip").forEach(function (b) {
+  b.addEventListener("click", function () {
+    tab = b.dataset.t;
+    document.querySelectorAll(".chip").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    render();
+    window.scrollTo(0, 0);
+  });
+});
+document.getElementById("reset").addEventListener("click", function () { state[tab] = {}; save(); render(); });
+render();
+</script>
+</body>
+</html>
